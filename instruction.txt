@@ -1,0 +1,33 @@
+Setup k0s cluster using:
+k0sctl apply --config k0s/k0sctl.yaml --no-wait
+k0sctl kubeconfig --config k0s/k0sctl.yaml 
+if needed:
+cat /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+Install cilium:
+chmod +x cilium/install.sh
+cilium install --version 1.16.1 --values cilium/cilium-values.yaml 
+cilium status --wait
+
+helm uninstall cilium -n kube-system
+
+Install openebs:
+helm repo add openebs https://openebs.github.io/charts
+helm repo update
+helm install openebs openebs/openebs --namespace openebs --create-namespace
+kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
+
+Install grafana:
+kubectl create namespace grafana
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install grafana grafana/grafana -f grafana/values.yaml --namespace grafana
+If ClusterIP, kubectl port-forward svc/grafana -n grafana 5000:80
+
+
+
+
+Ref: https://piotrminkowski.com/2024/02/13/java-flight-recorder-on-kubernetes/, 
+     https://cryostat.io/get-started/#installing-cryostat-operator
