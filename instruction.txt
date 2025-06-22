@@ -27,6 +27,9 @@ helm install grafana grafana/grafana -f grafana/values.yaml --namespace grafana
 If ClusterIP, kubectl port-forward svc/grafana -n grafana 5000:80
 
 
+Installing Cryostat Operator:
+curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.25.0/install.sh | bash -s v0.25.0
+kubectl create -f https://operatorhub.io/install/cryostat-operator.yaml
 
 
 Ref: https://piotrminkowski.com/2024/02/13/java-flight-recorder-on-kubernetes/, 
