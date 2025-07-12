@@ -1,3 +1,95 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: hello-spring-boot-app
+#   labels:
+#     app: hello-spring-boot-app
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: hello-spring-boot-app
+#   template:
+#     metadata:
+#       labels:
+#         app: hello-spring-boot-app
+#         cryostat.io/target: "true"
+#     spec:
+#       containers:
+#         - name: hello-spring-boot-app
+#           image: nazia141/hello-spring-boot-app:cryostat
+#           ports:
+#             - name: http
+#               containerPort: 8080
+#             - name: jfr-jmx
+#               containerPort: 9091
+#             - name: cryostat-agent
+#               containerPort: 9977
+#           env:
+#             - name: JAVA_TOOL_OPTIONS
+#               value: >
+#                 -Dcom.sun.management.jmxremote
+#                 -Dcom.sun.management.jmxremote.port=9091
+#                 -Dcom.sun.management.jmxremote.ssl=false
+#                 -Dcom.sun.management.jmxremote.authenticate=false
+#             - name: POD_IP
+#               valueFrom:
+#                 fieldRef:
+#                   fieldPath: status.podIP
+#             - name: CRYOSTAT_AGENT_APP_NAME
+#               value: "spring-boot-app"
+#             - name: NAMESPACE
+#               valueFrom:
+#                 fieldRef:
+#                   fieldPath: metadata.namespace
+#             - name: CRYOSTAT_INSTANCE_NAME
+#               value: cryostat
+#             - name: CRYOSTAT_AGENT_BASEURI
+#               value: http://cryostat.spring-boot-app.svc.cluster.local:8181
+#             - name: CRYOSTAT_AGENT_CALLBACK
+#               value: http://$(POD_IP):9977
+#             - name: CRYOSTAT_AGENT_API_WRITES_ENABLED
+#               value: "true"
+#             - name: CRYOSTAT_AGENT_AUTHORIZATION_TYPE
+#               value: kubernetes
+#             - name: CRYOSTAT_AGENT_WEBCLIENT_TLS_VERIFY_HOSTNAME
+#               value: "false"
+#             - name: CRYOSTAT_AGENT_WEBCLIENT_TLS_TRUST_ALL
+#               value: "true"
+#             - name: CRYOSTAT_AGENT_WEBCLIENT_TLS_REQUIRED         
+#               value: "false"
+#             - name: CRYOSTAT_WEB_NOTIFICATIONS_ENABLED
+#               value: "false"
+
+
+
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: hello-spring-boot-app
+# spec:
+#   type: NodePort
+#   selector:
+#     app: hello-spring-boot-app
+#   ports:
+#     - name: http
+#       port: 8080
+#       targetPort: 8080
+#       nodePort: 30080
+#       protocol: TCP
+#     - name: jfr-jmx
+#       port: 9091
+#       targetPort: 9091
+#       nodePort: 30991
+#       protocol: TCP
+#     - name: cryostat-agent
+#       port: 9977
+#       targetPort: 9977
+#       nodePort: 30977
+#       protocol: TCP
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,8 +115,6 @@ spec:
               containerPort: 8080
             - name: jfr-jmx
               containerPort: 9091
-            - name: cryostat-agent
-              containerPort: 9977
           env:
             - name: JAVA_TOOL_OPTIONS
               value: >
@@ -32,34 +122,27 @@ spec:
                 -Dcom.sun.management.jmxremote.port=9091
                 -Dcom.sun.management.jmxremote.ssl=false
                 -Dcom.sun.management.jmxremote.authenticate=false
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: CRYOSTAT_AGENT_APP_NAME
-              value: "spring-boot-app"
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: CRYOSTAT_INSTANCE_NAME
-              value: cryostat
-            - name: CRYOSTAT_AGENT_BASEURI
-              value: https://cryostat.cryostat.svc.cluster.local:8181
-            - name: CRYOSTAT_AGENT_CALLBACK
-              value: http://$(POD_IP):9977
-            - name: CRYOSTAT_AGENT_API_WRITES_ENABLED
-              value: "true"
-            - name: CRYOSTAT_AGENT_AUTHORIZATION_TYPE
-              value: kubernetes
-            - name: CRYOSTAT_AGENT_WEBCLIENT_TLS_VERIFY_HOSTNAME
-              value: "false"
-            - name: CRYOSTAT_AGENT_WEBCLIENT_TLS_TRUST_ALL
-              value: "true"
-
-
-
 ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: hello-spring-boot-app
+# spec:
+#   type: NodePort
+#   selector:
+#     app: hello-spring-boot-app
+#   ports:
+#     - name: http
+#       port: 8080
+#       targetPort: 8080
+#       nodePort: 30080
+#       protocol: TCP
+#     - name: jfr-jmx
+#       port: 9091
+#       targetPort: 9091
+#       nodePort: 30991
+#       protocol: TCP
+
 apiVersion: v1
 kind: Service
 metadata:
