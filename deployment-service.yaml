@@ -123,26 +123,6 @@ spec:
                 -Dcom.sun.management.jmxremote.ssl=false
                 -Dcom.sun.management.jmxremote.authenticate=false
 ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: hello-spring-boot-app
-# spec:
-#   type: NodePort
-#   selector:
-#     app: hello-spring-boot-app
-#   ports:
-#     - name: http
-#       port: 8080
-#       targetPort: 8080
-#       nodePort: 30080
-#       protocol: TCP
-#     - name: jfr-jmx
-#       port: 9091
-#       targetPort: 9091
-#       nodePort: 30991
-#       protocol: TCP
-
 apiVersion: v1
 kind: Service
 metadata:

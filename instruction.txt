@@ -36,6 +36,7 @@ kubectl create namespace spring-boot-app
 kubectl apply -f deployment-service.yaml -n spring-boot-app 
 
 
+helm show values cryostat-charts/cryostat > cryostat-values.yaml
 
 helm install cryostat cryostat-charts/cryostat \
   --namespace cryostat \
@@ -43,14 +44,24 @@ helm install cryostat cryostat-charts/cryostat \
   --set dashboards.enabled=true \
   --set grafana.enabled=true \
   --set openshift.enabled=false
+  --set webServer.notifications.enabled=false
+
+helm upgrade cryostat cryostat-charts/cryostat \
+  -n spring-boot-app \
+  --set grafana.enabled=true \
+  --set grafana.service.type=NodePort \
+  --set grafana.service.nodePort=32000
+
 
 kubectl port-forward svc/cryostat -n cryostat 8181:8181
 
 http://localhost:8181
 
-Ref: https://piotrminkowski.com/2024/02/13/java-flight-recorder-on-kubernetes/, 
-     https://cryostat.io/get-started/#installing-cryostat-operator
-
+Ref: https://github.com/cryostatio/cryostat-helm,
+     https://piotrminkowski.com/2024/02/13/java-flight-recorder-on-kubernetes/, 
+     https://cryostat.io/get-started/#installing-cryostat-operator,
+     https://github.com/cryostatio/cryostat-helm/blob/main/charts/cryostat/values.yaml,
+     https://cryostat.io/guides/#view-a-recording-in-grafana
 
 curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.25.0/install.sh | bash -s v0.25.0
 kubectl create -f https://operatorhub.io/install/cryostat-operator.yaml
