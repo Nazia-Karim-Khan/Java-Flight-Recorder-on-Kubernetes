@@ -26,6 +26,10 @@ helm repo update
 helm install grafana grafana/grafana -f grafana/values.yaml --namespace grafana
 If ClusterIP, kubectl port-forward svc/grafana -n grafana 5000:80
 
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus
+
 
 Installing Cryostat:
 helm repo add cryostat-charts https://cryostat.io/helm-charts
@@ -39,7 +43,7 @@ kubectl apply -f deployment-service.yaml -n spring-boot-app
 helm show values cryostat-charts/cryostat > cryostat-values.yaml
 
 helm install cryostat cryostat-charts/cryostat \
-  --namespace cryostat \
+  --namespace spring-boot-app \
   --create-namespace \
   --set dashboards.enabled=true \
   --set grafana.enabled=true \
@@ -56,6 +60,12 @@ helm upgrade cryostat cryostat-charts/cryostat \
 kubectl port-forward svc/cryostat -n cryostat 8181:8181
 
 http://localhost:8181
+
+
+
+http://localhost:4180/grafana/?orgId=1
+
+
 
 Ref: https://github.com/cryostatio/cryostat-helm,
      https://piotrminkowski.com/2024/02/13/java-flight-recorder-on-kubernetes/, 
