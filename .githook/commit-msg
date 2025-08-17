@@ -1,18 +1,15 @@
 #!/bin/bash
- 
+
 CC_REGEX="^(feat|fix|docs|style|refactor|test|chore)(\([a-zA-Z0-9_-]+\))?: .+"
- 
-while read oldrev newrev refname; do
-  for commit in $(git rev-list $oldrev..$newrev); do
-    msg=$(git log --format=%B -n 1 $commit)
-    first_line=$(echo "$msg" | head -n1)
- 
-    if ! echo "$first_line" | grep -qE "$CC_REGEX"; then
-      echo "❌ Commit $commit rejected: must follow Conventional Commits format"
-      echo "   Format: <type>[optional scope]: <description>"
-      exit 1
-    fi
-  done
-done
- 
+
+# $1 is the commit message file
+COMMIT_MSG_FILE=$1
+FIRST_LINE=$(head -n1 "$COMMIT_MSG_FILE")
+
+if ! echo "$FIRST_LINE" | grep -qE "$CC_REGEX"; then
+    echo "❌ Commit rejected: must follow Conventional Commits format"
+    echo "   Format: <type>[optional scope]: <description>"
+    exit 1
+fi
+
 exit 0
