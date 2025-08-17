@@ -15,4 +15,5 @@ while read oldrev newrev refname; do
   done
 done
  
+ 
 exit 0
